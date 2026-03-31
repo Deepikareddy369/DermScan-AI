@@ -1,10 +1,35 @@
+# Virtual environments
 venv/
 venv313/
+
+# Python cache
 __pycache__/
 *.pyc
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Model files (very important for ML)
 *.h5
 *.keras
+*.weights.h5
 model/
+
+# Dataset files (optional but recommended)
 *.zip
+*.csv
+data/
+dataset/
+
+# Environment / secrets
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Executables
 *.exe
-.ipynb_checkpoints/
