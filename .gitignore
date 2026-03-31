@@ -1,0 +1,10 @@
+venv/
+venv313/
+__pycache__/
+*.pyc
+*.h5
+*.keras
+model/
+*.zip
+*.exe
+.ipynb_checkpoints/

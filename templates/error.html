@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DermScan AI — Error</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cream: #F7F3EE; --terracotta: #C8714A; --rust: #A3462A;
+    --forest: #2D4A3E; --charcoal: #1C1C1C; --white: #FFFFFF; --sand: #E8DDD0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+  nav { position: fixed; top: 0; left: 0; right: 0; display: flex; padding: 24px 48px; }
+  .logo { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--forest); }
+  .logo span { color: var(--terracotta); }
+  .error-card { background: var(--white); border-radius: 28px; padding: 48px 40px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 8px 40px rgba(0,0,0,0.08); position: relative; overflow: hidden; }
+  .error-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--rust), var(--terracotta)); }
+  .error-icon { font-size: 56px; margin-bottom: 20px; }
+  h1 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--charcoal); margin-bottom: 12px; }
+  .error-msg { font-size: 14px; color: #888; margin-bottom: 32px; line-height: 1.6; font-weight: 300; background: rgba(200,113,74,0.06); border: 1px solid rgba(200,113,74,0.2); border-radius: 12px; padding: 16px; color: var(--rust); }
+  .btn-back { display: inline-flex; align-items: center; gap: 8px; background: var(--forest); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.3s ease; }
+  .btn-back:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(45,74,62,0.3); }
+</style>
+</head>
+<body>
+<nav><div class="logo">Derm<span>Scan</span> AI</div></nav>
+<div class="error-card">
+  <div class="error-icon">⚠️</div>
+  <h1>Something went wrong</h1>
+  <div class="error-msg">{{ error }}</div>
+  <a href="/" class="btn-back">← Try Again</a>
+</div>
+</body>
+</html>

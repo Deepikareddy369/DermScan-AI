@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DermScan AI — Skin Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cream: #F7F3EE;
+    --sand: #E8DDD0;
+    --terracotta: #C8714A;
+    --rust: #A3462A;
+    --forest: #2D4A3E;
+    --sage: #7A9E8E;
+    --charcoal: #1C1C1C;
+    --white: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: var(--cream);
+    color: var(--charcoal);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Decorative background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(200,113,74,0.12) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -150px; left: -150px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(45,74,62,0.10) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* Nav */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 48px;
+    position: relative; z-index: 10;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--forest);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--terracotta); }
+  .nav-badge {
+    background: var(--forest);
+    color: var(--cream);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 16px;
+    border-radius: 100px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* Hero */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 48px 80px;
+    position: relative; z-index: 1;
+  }
+
+  .hero-left { }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--sand);
+    border: 1px solid rgba(163,70,42,0.2);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--rust);
+    letter-spacing: 0.5px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--terracotta);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(42px, 5vw, 68px);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--charcoal);
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--terracotta);
+  }
+
+  .subtitle {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #5A5A5A;
+    max-width: 420px;
+    margin-bottom: 40px;
+    font-weight: 300;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .stats {
+    display: flex;
+    gap: 32px;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .stat { }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--forest);
+  }
+  .stat-label {
+    font-size: 12px;
+    color: #888;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+  }
+
+  /* Upload Card */
+  .upload-card {
+    background: var(--white);
+    border-radius: 28px;
+    padding: 40px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+    animation: fadeUp 0.6s 0.15s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+  .upload-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--terracotta), var(--forest));
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--charcoal);
+  }
+  .card-sub {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 28px;
+    font-weight: 300;
+  }
+
+  /* Drop Zone */
+  .dropzone {
+    border: 2px dashed rgba(200,113,74,0.3);
+    border-radius: 18px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--cream);
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .dropzone:hover, .dropzone.drag-over {
+    border-color: var(--terracotta);
+    background: rgba(200,113,74,0.04);
+    transform: scale(1.01);
+  }
+
+  .drop-icon {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--terracotta), var(--rust));
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 24px;
+  }
+
+  .drop-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+  .drop-sub {
+    font-size: 12px;
+    color: #AAA;
+  }
+  .drop-sub strong { color: var(--terracotta); cursor: pointer; }
+
+  #fileInput { display: none; }
+
+  /* Preview */
+  .preview-wrap {
+    display: none;
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .preview-wrap.visible { display: block; }
+  .preview-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 14px;
+    display: block;
+  }
+  .preview-remove {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .preview-name {
+    font-size: 12px;
+    color: var(--forest);
+    margin-top: 8px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  /* Submit Button */
+  .btn-analyze {
+    width: 100%;
+    background: linear-gradient(135deg, var(--forest), #3D6B5C);
+    color: var(--white);
+    border: none;
+    padding: 16px 32px;
+    border-radius: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    letter-spacing: 0.3px;
+  }
+  .btn-analyze:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(45,74,62,0.35);
+  }
+  .btn-analyze:active { transform: translateY(0); }
+  .btn-analyze:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Classes pills */
+  .classes-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .class-pill {
+    background: var(--sand);
+    border-radius: 100px;
+    padding: 5px 12px;
+    font-size: 11px;
+    color: var(--forest);
+    font-weight: 500;
+  }
+
+  /* Features */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 1200px;
+    margin: 0 auto 80px;
+    padding: 0 48px;
+    position: relative; z-index: 1;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+  .feature {
+    background: var(--white);
+    border-radius: 18px;
+    padding: 24px;
+    border: 1px solid var(--sand);
+  }
+  .feature-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  .feature-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+  .feature-desc {
+    font-size: 12px;
+    color: #888;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* Loading overlay */
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(247,243,238,0.92);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .loading-overlay.visible { display: flex; }
+  .spinner {
+    width: 56px; height: 56px;
+    border: 3px solid var(--sand);
+    border-top-color: var(--terracotta);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  .loading-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--charcoal);
+  }
+  .loading-sub {
+    font-size: 13px;
+    color: #999;
+    font-weight: 300;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; padding: 32px 24px; gap: 32px; }
+    nav { padding: 20px 24px; }
+    .features { grid-template-columns: 1fr; padding: 0 24px; }
+    h1 { font-size: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Derm<span>Scan</span> AI</div>
+  <div class="nav-badge">Beta v1.0</div>
+</nav>
+
+<section class="hero">
+  <div class="hero-left">
+    <div class="eyebrow">AI-Powered Skin Analysis</div>
+    <h1>Know your skin,<br/><em>instantly.</em></h1>
+    <p class="subtitle">Upload a photo of your skin condition and get an instant AI-powered analysis with treatment suggestions. Fast, private, and accurate.</p>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Accuracy</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Conditions</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">&lt;2s</div>
+        <div class="stat-label">Analysis time</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="upload-card">
+      <div class="card-title">Analyse your skin</div>
+      <p class="card-sub">Supports JPG, PNG, WEBP · Max 10MB</p>
+
+      <form action="/predict" method="post" enctype="multipart/form-data" id="uploadForm">
+        <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+          <div class="drop-icon">🔬</div>
+          <div class="drop-title">Drop your image here</div>
+          <div class="drop-sub">or <strong>browse files</strong> to upload</div>
+          <input type="file" name="file" id="fileInput" accept="image/*" required/>
+        </div>
+
+        <div class="preview-wrap" id="previewWrap">
+          <img class="preview-img" id="previewImg" src="" alt="Preview"/>
+          <button type="button" class="preview-remove" onclick="removeImage()">✕</button>
+          <div class="preview-name" id="previewName"></div>
+        </div>
+
+        <button type="submit" class="btn-analyze" id="submitBtn" disabled>
+          <span>🧬</span> Analyse Skin Condition
+        </button>
+      </form>
+
+      <div class="classes-row">
+        <span class="class-pill">🔴 Acne</span>
+        <span class="class-pill">🟤 Benign Keratosis</span>
+        <span class="class-pill">🟡 Eczema</span>
+        <span class="class-pill">🟠 Psoriasis</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="features">
+  <div class="feature">
+    <div class="feature-icon">🛡️</div>
+    <div class="feature-title">Private & Secure</div>
+    <div class="feature-desc">Your images are never stored. Analysis happens instantly and data is discarded immediately.</div>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">⚡</div>
+    <div class="feature-title">Instant Results</div>
+    <div class="feature-desc">Powered by MobileNetV2 deep learning model trained on thousands of skin images.</div>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">💊</div>
+    <div class="feature-title">Treatment Guidance</div>
+    <div class="feature-desc">Get condition-specific treatment suggestions alongside general skincare tips.</div>
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Analysing your skin...</div>
+  <div class="loading-sub">This usually takes less than 2 seconds</div>
+</div>
+
+<script>
+  const fileInput = document.getElementById('fileInput');
+  const dropzone = document.getElementById('dropzone');
+  const previewWrap = document.getElementById('previewWrap');
+  const previewImg = document.getElementById('previewImg');
+  const previewName = document.getElementById('previewName');
+  const submitBtn = document.getElementById('submitBtn');
+  const uploadForm = document.getElementById('uploadForm');
+  const loadingOverlay = document.getElementById('loadingOverlay');
+
+  fileInput.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      showPreview(this.files[0]);
+    }
+  });
+
+  dropzone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropzone.classList.add('drag-over');
+  });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropzone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      fileInput.files = e.dataTransfer.files;
+      showPreview(file);
+    }
+  });
+
+  function showPreview(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      previewImg.src = e.target.result;
+      previewName.textContent = file.name;
+      dropzone.style.display = 'none';
+      previewWrap.classList.add('visible');
+      submitBtn.disabled = false;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeImage() {
+    fileInput.value = '';
+    previewImg.src = '';
+    previewWrap.classList.remove('visible');
+    dropzone.style.display = 'block';
+    submitBtn.disabled = true;
+  }
+
+  uploadForm.addEventListener('submit', () => {
+    loadingOverlay.classList.add('visible');
+  });
+</script>
+</body>
+</html>
